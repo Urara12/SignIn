@@ -1,0 +1,214 @@
+State管理
+SignUp
+ const email = useSelector((state) => state.email);
+  // const name = useSelector((state) => state.name);
+  // const password = useSelector((state) => state.password);
+
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  //   const [email, setEmail] = useState("");
+
+  const changeName = (event) => {
+    // dispatch({ type: "CHANGE_NAME", name: event.target.value });
+    setName(event.target.value);
+    console.log(name);
+  };
+  const changeEmail = (event) => {
+    dispatch({ type: "CHANGE_EMAIL", email: event.target.value });
+    // setEmail(event.target.value);
+    console.log(email);
+  };
+  const changePassword = (event) => {
+    // dispatch({ type: "CHANGE_PASSWORD", password: event.target.value });
+    setPassword(event.target.value);
+    console.log(password);
+  };
+
+Authenticate
+const email = useSelector((state) => state.email);
+  // const confirmationCode = useSelector((state) => state.confirmationCode);
+
+  // 認証にはいらないけどこのページでSignInも行うのでパスワードを入力してもらう
+  const [password, setPassword] = useState("");
+  //   const [email, setEmail] = React.useState("");
+    const [confirmationCode, setconfirmationCode] = React.useState("");
+
+  const changeEmail = (event) => {
+    dispatch({ type: "CHANGE_EMAIL", email: event.target.value });
+    // setEmail(event.target.value);
+    console.log(email);
+  };
+  const changeConfirmationCode = (event) => {
+    dispatch({
+      type: "CHANGE_CONFIRMATION_CODE",
+      confirmationCode: event.target.value,
+    });
+    // setVerificationCode(event.target.value)
+    console.log(confirmationCode);
+  };
+  //   const changedEmailHandler = (event) => setEmail(event.target.value);
+  //   const changedVerificationCodeHandler = (event) =>
+  //     setVerificationCode(event.target.value);
+
+SignIn
+  const email = useSelector((state) => state.email);
+  // const password = useSelector((state) => state.password);
+
+  // const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  const changeEmail = (event) => {
+    dispatch({ type: "CHANGE_EMAIL", email: event.target.value });
+    // setEmail(event.target.value);
+    console.log(email);
+  };
+  const changePassword = (event) => {
+    dispatch({ type: "CHANGE_PASSWORD", password: event.target.value });
+    // setPassword(event.target.value)
+    console.log(password);
+  };
+
+  // const changedEmailHaldler = (e) => setEmail(e.target.value);
+  // const changedPasswordHandler = (e) => setPassword(e.target.value);
+
+
+
+import React from "react";
+import "./App.css";
+
+// import {
+//   CognitoUserPool,
+//   CognitoUserAttribute,
+// } from "amazon-cognito-identity-js";
+import awsConfiguration from "./awsConfiguration.ts";
+
+// const userPool = new CognitoUserPool({
+//   UserPoolId: awsConfiguration.UserPoolId,
+//   ClientId: awsConfiguration.ClientId,
+// });
+
+// function App() {
+// const signUp = ( ) => {
+
+// }
+//   return (
+//     <div className="App">
+//       <div id="signup">
+//         <h1>Sign Up</h1>
+//         <form name="form-signup">
+//           <span>User ID(Email)</span>
+//           <input type="text" id="email" placeholder="Email Address" />
+//           <br />
+//           <span>Password</span>
+//           <input type="password" id="password" placeholder="Password" />
+//           <br />
+//           <br />
+//           <input type="button" id="createAccount" value="Create Account" />
+//         </form>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default App;
+
+// import React from "react";
+// // import "../App.css";
+
+// import {
+//   CognitoUserPool,
+//   CognitoUserAttribute,
+// } from "amazon-cognito-identity-js";
+// import awsConfiguration from "./awsConfiguration.ts";
+
+// const userPool = new CognitoUserPool({
+//   UserPoolId: awsConfiguration.UserPoolId,
+//   ClientId: awsConfiguration.ClientId,
+// });
+
+// const SignUp = () => {
+//   const [email, setEmail] = React.useState("");
+//   const [password, setPassword] = React.useState("");
+
+//   const changedEmailHandler = (event) => setEmail(event.target.value);
+//   const changedPasswordHandler = (event) => setPassword(event.target.value);
+//   const signUp = () => {
+//     const attributeList = [
+//       new CognitoUserAttribute({
+//         Name: "email",
+//         Value: email,
+//       }),
+//     ];
+//     userPool.signUp(email, password, attributeList, [], (err, result) => {
+//       if (err) {
+//         console.error(err);
+//         return;
+//       }
+//       setEmail("");
+//       setPassword("");
+//     });
+//   };
+
+//   return (
+//     <div className="SignUp">
+//       <h1 style={{ textAlign: "left" }}>SignUp</h1>
+//       <input type="text" placeholder="email" onChange={changedEmailHandler} />
+//       <input
+//         type="text"
+//         placeholder="password"
+//         onChange={changedPasswordHandler}
+//       />
+//       <button onClick={signUp}>SignUp</button>
+//     </div>
+//   );
+// };
+
+// export default SignUp;
+
+// import React from "react";
+
+import { CognitoUserPool, CognitoUser } from "amazon-cognito-identity-js";
+// import awsConfiguration from "../awsConfiguration";
+
+const userPool = new CognitoUserPool({
+  UserPoolId: awsConfiguration.UserPoolId,
+  ClientId: awsConfiguration.ClientId,
+});
+
+const Verification = () => {
+  const [email, setEmail] = React.useState("");
+  const [verificationCode, setVerificationCode] = React.useState("");
+  const changedEmailHandler = (event) => setEmail(event.target.value);
+  const changedVerificationCodeHandler = (event) =>
+    setVerificationCode(event.target.value);
+
+  const verifyCode = () => {
+    const cognitoUser = new CognitoUser({
+      Username: email,
+      Pool: userPool,
+    });
+    cognitoUser.confirmRegistration(verificationCode, true, (err) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log("verification succeeded");
+      setEmail("");
+      setVerificationCode("");
+    });
+  };
+  return (
+    <div className="Verification">
+      <h1>Authenticate</h1>
+      <input
+        type="text"
+        placeholder="verification code"
+        onChange={changedVerificationCodeHandler}
+      />
+      <input type="text" placeholder="email" onChange={changedEmailHandler} />
+      <button onClick={verifyCode}>Authenticate</button>
+    </div>
+  );
+};
+
+export default Verification;
